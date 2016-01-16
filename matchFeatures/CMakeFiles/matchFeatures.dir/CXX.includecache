@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shivam/workspace/Others/Vision/matchFeatures/matchFeatures.cpp
+stdio.h
+-
+iostream
+-
+opencv2/core/core.hpp
+/home/shivam/workspace/Others/Vision/matchFeatures/opencv2/core/core.hpp
+opencv2/features2d/features2d.hpp
+/home/shivam/workspace/Others/Vision/matchFeatures/opencv2/features2d/features2d.hpp
+opencv2/nonfree/features2d.hpp
+/home/shivam/workspace/Others/Vision/matchFeatures/opencv2/nonfree/features2d.hpp
+opencv2/highgui/highgui.hpp
+/home/shivam/workspace/Others/Vision/matchFeatures/opencv2/highgui/highgui.hpp
+opencv2/nonfree/nonfree.hpp
+/home/shivam/workspace/Others/Vision/matchFeatures/opencv2/nonfree/nonfree.hpp
+

@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/shivam/workspace/Others/Vision/Webcam Display/videoCapture.cpp
+iostream
+-
+opencv2/opencv.hpp
+/home/shivam/workspace/Others/Vision/Webcam Display/opencv2/opencv.hpp
+

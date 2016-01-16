@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( matchFeatures )
+find_package( OpenCV REQUIRED )
+add_executable( matchFeatures matchFeatures.cpp )
+target_link_libraries( matchFeatures ${OpenCV_LIBS} )
+target_link_libraries(matchFeatures ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} opencv_nonfree  )
