@@ -18,12 +18,12 @@ int  main (int argc, char ** argv)
 
 	for(;;)
 	{
-		
+
 		cap>>frame; //Get camera frame
 
 		imshow("Camera Frame", frame);
 
-		 if( waitKey(1) == 27 ) 
+		 if( waitKey(1) == 27 )
 		 	break;  //break when ESC key is pressed
 		}
 
@@ -31,5 +31,5 @@ int  main (int argc, char ** argv)
 
 
 		return 0;
-	
+
 }
