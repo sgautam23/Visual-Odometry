@@ -60,9 +60,14 @@ int  main (int argc, char ** argv)
 		// Comparing features with second frame
 
 		cap>>It2; // capture second frame
-		//detector->detectAndCompute( It2, mask, keypoints2, descriptor2 );//For second frame
+		detector->detectAndCompute( It2, mask, keypoints2, descriptor2 );//For second frame
+		
 		matcher.match(descriptor1,descriptor2, matches);
 
+		cout<<"descriptor1 size"<<descriptor1.size;
+		cout<<"descriptor2 size"<<descriptor2.size;
+		//cout<<"matcher size"<<matcher.size;
+		
 		for( int i = 0; i < descriptor1.rows; i++ )
 			{ double dist = matches[i].distance;
 				if( dist < min_dist ) min_dist = dist;
@@ -72,33 +77,35 @@ int  main (int argc, char ** argv)
 			for( int i = 0; i < descriptor1.rows; i++ )
 			{
 				if( matches[i].distance <= max(2*min_dist, 0.02) )
-				{ good_matches.push_back( matches[i]); }
+					{ good_matches.push_back( matches[i]); }
 			}
 
 		//drawMatches( It1, keypoints1, It2, keypoints2, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
-			//drawKeypoints(It1,keypoints1,fIt1,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+		//drawKeypoints(It1,keypoints1,fIt1,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 		//	drawKeypoints(It2,keypoints2,fIt2,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 
 
 	  //recovering the pose and the essential matrix
 
-		//  E = findEssentialMat(keypoints1,keypoints2, focal, pp, RANSAC, 0.999, 1.0, mask);
+	//  E = findEssentialMat(keypoints1,keypoints2, focal, pp, RANSAC, 0.999, 1.0, mask);
 	  //recoverPose(E, keypoints1,keypoints2, R, t, focal, pp, mask);
 
 		//using FLANN matcher to match descriptors;
 
-		imshow("Camera Frame 1", It1);
-		imshow("Camera Frame 2", It2);
-		//	imshow("Keypoints Frame 1",fIt1);
-		//	imshow("Keypoints Frame 2",fIt2);
+		//imshow("Camera Frame 1", It1);
+		//imshow("Camera Frame 2", It2);
+		//cout<<fIt1.size();
+			//imshow("Keypoints Frame 1",fIt1);
+			//imshow("Keypoints Frame 2",fIt2);
 		//imshow("Matches",img_matches);
 
 
+		//Make old frame the new frame
+		//	It1=It2;
+		//	keypoints1=keypoints2;
+		//	descriptor1=descriptor2;
 
-			It1=It2;
-			keypoints1=keypoints2;
-			descriptor1=descriptor2;
 
 
 			if( waitKey(1) == 27 )
