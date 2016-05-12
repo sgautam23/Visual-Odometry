@@ -18,8 +18,9 @@ using namespace std;
 
 int  main (int argc, char ** argv)
 
-{
-	VideoCapture cap(0); //device 0
+{	
+	int deviceNumber=1;
+	VideoCapture cap(deviceNumber); //device 0
 
 	if( !cap.isOpened())
 		return -1;  //couldn't open the device
@@ -80,10 +81,10 @@ int  main (int argc, char ** argv)
 					{ good_matches.push_back( matches[i]); }
 			}
 
-		//drawMatches( It1, keypoints1, It2, keypoints2, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+		drawMatches( It1, keypoints1, It2, keypoints2, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
-		//drawKeypoints(It1,keypoints1,fIt1,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
-		//	drawKeypoints(It2,keypoints2,fIt2,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+		drawKeypoints(It1,keypoints1,fIt1,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+			drawKeypoints(It2,keypoints2,fIt2,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 
 
 	  //recovering the pose and the essential matrix
@@ -93,16 +94,16 @@ int  main (int argc, char ** argv)
 
 		//using FLANN matcher to match descriptors;
 
-		//imshow("Camera Frame 1", It1);
-		//imshow("Camera Frame 2", It2);
+		// imshow("Camera Frame 1", It1);
+		// imshow("Camera Frame 2", It2);
 		//cout<<fIt1.size();
-			//imshow("Keypoints Frame 1",fIt1);
-			//imshow("Keypoints Frame 2",fIt2);
-		//imshow("Matches",img_matches);
+			imshow("Keypoints Frame 1",fIt1);
+			imshow("Keypoints Frame 2",fIt2);
+		imshow("Matches",img_matches);
 
 
 		//Make old frame the new frame
-		//	It1=It2;
+			It1=It2;
 		//	keypoints1=keypoints2;
 		//	descriptor1=descriptor2;
 
