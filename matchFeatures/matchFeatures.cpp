@@ -8,6 +8,7 @@
 #include "opencv2/features2d.hpp"
 #include "opencv2/calib3d.hpp"
 #include "opencv2/xfeatures2d.hpp"
+// #include "opencv2/nonfree/features2d.hpp"
 #include <vector>
 
 using namespace cv;
@@ -28,28 +29,36 @@ int  main (int argc, char ** argv)
 
 	int minHessian=600;
 	
+
+	//SURF
 	Ptr<SURF> detector1= SURF::create( minHessian );
 	Ptr<SURF> detector2 = SURF::create( minHessian );
 
 
-	
-	//FastFeatureDetector fastDetector(20);
+	//FAST
+	// FeatureDetector* detector1;
+	// FeatureDetector* detector2;
+	// detector1->create("FAST");
+	// detector2->create("FAST");
+
 	//std::vector<KeyPoint> surfKeypoints, fastKeypoints;
 
 	Mat It1,It2;  //Frame 1 and 2
 	Mat fIt1, fIt2;
 	Mat descriptor1, descriptor2;
 	std::vector<KeyPoint> keypoints1, keypoints2;
-	Mat img_matches;
+	
 	Mat E, R, t, mask;
 
+	
+
+	cap>>It1; // capture first frame
+
+	FlannBasedMatcher matcher;
+	Mat img_matches;
 	std::vector< DMatch > matches;
 	std::vector< DMatch > good_matches;
 
-	cap>>It1; // capture first frame
-  //detector->detectAndCompute( It1, mask, keypoints1, descriptor1 ); // Get keypoints and descriptor for first frame
-
-	FlannBasedMatcher matcher;
 
 	double max_dist = 0; double min_dist = 100;
 
@@ -64,19 +73,27 @@ int  main (int argc, char ** argv)
 		// Comparing features with second frame
 
 		cap>>It2; // capture second frame
+
+		//SURF
 		detector1->detectAndCompute( It1, mask, keypoints1, descriptor1 );//For second frame
 		detector2->detectAndCompute( It2, mask, keypoints2, descriptor2 );//For second frame
 		
+		//FAST
+		// detector1-> detect(It1,keypoints1);
+		// detector2->detect(It2,keypoints2);
+		matches.clear();
+		good_matches.clear();
 		matcher.match(descriptor1,descriptor2, matches);
-
-		// cout<<"descriptor1 size"<<descriptor1.size;
-		// cout<<"descriptor2 size"<<descriptor2.size;
-		//cout<<"matcher size"<<matcher.size;
 		
+		max_dist=0;
+		min_dist=100;
 		for( int i = 0; i < descriptor1.rows; i++ )
-			{ double dist = matches[i].distance;
-				if( dist < min_dist ) min_dist = dist;
-				if( dist > max_dist ) max_dist = dist;
+			{ 
+				double dist = matches[i].distance;
+				if( dist < min_dist ) 
+					min_dist = dist;
+				if( dist > max_dist ) 
+					max_dist = dist;
 			}
 
 			for( int i = 0; i < descriptor1.rows; i++ )
@@ -86,7 +103,7 @@ int  main (int argc, char ** argv)
 					}
 			}
 
-		//drawMatches( It1, keypoints1, It2, keypoints2, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+		drawMatches( It1, keypoints1, It2, keypoints2, good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
 		drawKeypoints(It1,keypoints1,fIt1,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
 		drawKeypoints(It2,keypoints2,fIt2,Scalar::all(-1), DrawMatchesFlags::DEFAULT);
@@ -94,7 +111,7 @@ int  main (int argc, char ** argv)
 
 	  //recovering the pose and the essential matrix
 
-		E = findEssentialMat(keypoints1,keypoints2, focal, pp, RANSAC, 0.999, 1.0, mask);
+		// E = findEssentialMat(keypoints1,keypoints2, focal, pp, RANSAC, 0.999, 1.0, mask);
 	  //recoverPose(E, keypoints1,keypoints2, R, t, focal, pp, mask);
 
 		//using FLANN matcher to match descriptors;
@@ -104,7 +121,7 @@ int  main (int argc, char ** argv)
 		//cout<<fIt1.size();
 			imshow("Keypoints Frame 1",fIt1);
 			imshow("Keypoints Frame 2",fIt2);
-		//imshow("Matches",img_matches);
+			imshow("Matches",img_matches);
 
 
 		//Make old frame the new frame
