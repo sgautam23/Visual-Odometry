@@ -8,6 +8,7 @@
 #include "opencv2/features2d.hpp"
 #include "opencv2/calib3d.hpp"
 #include "opencv2/xfeatures2d.hpp"
+#include "GraphUtils.h"
 // #include "opencv2/nonfree/features2d.hpp"
 #include <vector>
 
@@ -48,11 +49,12 @@ int  main (int argc, char ** argv)
 	Mat descriptor1, descriptor2;
 	std::vector<KeyPoint> keypoints1, keypoints2;
 
-	Mat k =(Mat_<double>(3,3) << 794.204174, 0, 258.925189, 0, 790.914562, 240.688826, 0, 0, 1);
+	Mat k = (Mat_<double>(3,3) << 794.204174, 0, 258.925189, 0, 790.914562, 240.688826, 0, 0, 1);
+	Mat W = (Mat_<double>(3,3) << 0,-1,0,1,0,0,0,0,1);
 	
 	Mat E, R, t, mask;
 
-	
+	Mat t2;
 
 	cap>>It1; // capture first frame
 
@@ -65,9 +67,12 @@ int  main (int argc, char ** argv)
 
 	double max_dist = 0; double min_dist = 100;
 
+	long long xdist=0,ydist=0,zdist=0;
 
 	double focal = 3.7;
 	cv::Point2d pp(0, 0);
+
+	std::vector<double> x,y,z;
 
 
 	for(;;)
@@ -122,7 +127,27 @@ int  main (int argc, char ** argv)
 		}
 
 		Mat fundamental_matrix = findFundamentalMat(pts1, pts2, FM_RANSAC, 3, 0.99);
-		cout<<fundamental_matrix;
+		//cout<<fundamental_matrix;
+
+		E = k.t() * fundamental_matrix * k;
+		// cout<<E<<endl;
+
+		SVD s =  SVD(E);
+
+		W.at<double>(0,1) = -s.w.at<double>(0,0);
+		W.at<double>(1,0) = s.w.at<double>(1,0);
+		// cout<<s.w;
+		// cout<<W;
+		t =  s.u * W *s.u.t();		// t= U*W*S*U'
+		t2= s.u.col(2);
+		xdist+=t2.at<double>(0,0);
+		ydist+=t2.at<double>(1,0);
+		zdist+=t2.at<double>(2,0);
+		// cout<<t<<endl;
+		// cout<<"x: "<<t.at<double>(2,1)<<" y: "<<t.at<double>(0,2)<<" z: "<<t.at<double>(1,0)<<endl;
+	  	// cout<<"x: "<<t2.at<double>(0,0)<<" y: "<<t2.at<double>(1,0)<<" z: "<<t2.at<double>(2,0)<<endl;
+	  	cout<<"x: "<<xdist<<" y: "<<ydist<<" z: "<<zdist<<endl;
+	  	// cout<<t2;
 
 	  //recovering the pose and the essential matrix
 
