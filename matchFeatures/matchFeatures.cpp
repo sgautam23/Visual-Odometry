@@ -56,7 +56,7 @@ int  main (int argc, char ** argv)
 
 	Mat t2;
 
-	cap>>It1; // capture first frame
+	
 
 	FlannBasedMatcher matcher;
 	Mat img_matches;
@@ -67,13 +67,15 @@ int  main (int argc, char ** argv)
 
 	double max_dist = 0; double min_dist = 100;
 
-	long long xdist=0,ydist=0,zdist=0;
+	double xdist=0,ydist=0,zdist=0;
 
 	double focal = 3.7;
 	cv::Point2d pp(0, 0);
 
 	std::vector<double> x,y,z;
 
+	cap>>It1; // capture first frame
+	detector1->detectAndCompute( It1, mask, keypoints1, descriptor1 );//For second frame
 
 	for(;;)
 	{
@@ -84,10 +86,10 @@ int  main (int argc, char ** argv)
 
 		matches.clear();
 		good_matches.clear();
-		keypoints1.clear();
+		// keypoints1.clear();
 		keypoints2.clear();
 		//SURF
-		detector1->detectAndCompute( It1, mask, keypoints1, descriptor1 );//For second frame
+		// detector1->detectAndCompute( It1, mask, keypoints1, descriptor1 );//For second frame
 		detector2->detectAndCompute( It2, mask, keypoints2, descriptor2 );//For second frame
 		
 		//FAST
@@ -126,7 +128,7 @@ int  main (int argc, char ** argv)
 			pts2.push_back(keypoints2[i.queryIdx].pt);
 		}
 
-		Mat fundamental_matrix = findFundamentalMat(pts1, pts2, FM_RANSAC, 3, 0.99);
+		Mat fundamental_matrix = findFundamentalMat(pts1, pts2, FM_RANSAC,0.1 , 0.99);
 		//cout<<fundamental_matrix;
 
 		E = k.t() * fundamental_matrix * k;
@@ -146,7 +148,7 @@ int  main (int argc, char ** argv)
 		// cout<<t<<endl;
 		// cout<<"x: "<<t.at<double>(2,1)<<" y: "<<t.at<double>(0,2)<<" z: "<<t.at<double>(1,0)<<endl;
 	  	// cout<<"x: "<<t2.at<double>(0,0)<<" y: "<<t2.at<double>(1,0)<<" z: "<<t2.at<double>(2,0)<<endl;
-	  	cout<<"x: "<<xdist<<" y: "<<ydist<<" z: "<<zdist<<endl;
+	  	cout<<"x: "<<xdist<<" y: "<<ydist<<" z: "<<zdist<<endl<<endl;
 	  	// cout<<t2;
 
 	  //recovering the pose and the essential matrix
@@ -167,8 +169,10 @@ int  main (int argc, char ** argv)
 
 		//Make old frame the new frame
 			It1=It2;
-		//	keypoints1=keypoints2;
-		//	descriptor1=descriptor2;
+			keypoints1.clear();
+			// descriptor1.clear();
+			keypoints1=keypoints2;
+			descriptor1=descriptor2;
 
 
 
